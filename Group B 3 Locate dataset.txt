@@ -1,0 +1,63 @@
+Locate dataset (e.g., sample_weather.txt) for working on weather data which reads the text 
+input files and finds average for temperature, dew point and wind speed. 
+
+sudo apt update && sudo apt upgrade -y
+
+sudo apt install openjdk-11-jdk -y
+
+java -version
+
+readlink -f $(which java)
+
+cd ~
+
+wget https://downloads.apache.org/hadoop/common/hadoop-3.3.6/hadoop-3.3.6.tar.gz
+
+tar -xvzf hadoop-3.3.6.tar.gz
+
+mv hadoop-3.3.6 hadoop
+
+nano ~/.bashrc
+
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export HADOOP_HOME=$HOME/hadoop
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+source ~/.bashrc
+
+hadoop version
+
+mkdir WeatherProject
+cd WeatherProject
+
+nano sample_weather.txt
+
+Pune,32,21,12
+Mumbai,34,24,10
+Delhi,40,18,15
+Pune,30,20,14
+Mumbai,33,25,11
+Delhi,42,19,16
+Pune,31,22,13
+Mumbai,35,26,12
+Delhi,41,20,14
+
+nano WeatherAnalysis.java
+
+mkdir classes
+
+javac -classpath $(hadoop classpath) -d classes WeatherAnalysis.java
+
+jar -cvf weather.jar -C classes/ .
+
+rm -rf output
+
+hadoop jar weather.jar WeatherAnalysis sample_weather.txt output
+
+cat output/part-r-00000
